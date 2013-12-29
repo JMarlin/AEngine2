@@ -55,7 +55,7 @@ public class Core extends JPanel {
    private boolean animToggle;          //Limits animation updates to every other frame. Makes mouse look smoother while keeping 12fps animations
    private BufferedImage tempImg;       //Used to transform Thing and Item bitmaps and render them to the backbuffer
    private AffineTransform at;          //For performing scaling on the player character
-   private AffineTransformOp scaleOp;   //For performing scaling on the plater character
+   private AffineTransformOp scaleOp;   //For performing scaling on the player character
    private int scroll, maxScroll, txtScroll, maxTxtScroll;      //Parameters defining the state of the UI textbox
    private double lastTime;             //Timecode captured at the start of last frame, used to frame-limit render loop to 24fps
    private String lastLevel;            //Level file path captured from the InterfaceTree on previous render, used to trigger new level load

@@ -1,0 +1,52 @@
+ -----------------------------------------------------------------------------
+| AUTHOR'S NOTE:                                                              |
+|    This document, in the future, will be expanded to include proper API     |
+|    reference.                                                               |
+ -----------------------------------------------------------------------------
+	
+	
+AENGINE2: A simple 2D point-and-click adventure game engine
+------------------------------------------------------------
+
+   AEngine2 encapsultes the core framework of a rudimentary point-and-click game
+and, with recognition of the similarities in user interaction, was designed to
+be a system familiar to web developers. To this end, development of an AEngine2
+based game involves the creation of XML files defining the layout of objects for
+each scene/level/room in the developer's game and containing scripting blocks
+written in JavaScript which allow the implementation of interactive behaviours
+thereof. 
+
+   Each game should contain the following minimum directory structure:
+   
+    |
+    |-- AEngine2.jar
+	|-- game
+		 |
+		 |-- start.xml
+		 |-- global
+		      |
+			  |-- ui
+			       |
+				   |-- itemhighlight.png
+				   |-- lookbutton.png
+				   |-- looktool.png
+				   |-- scrolldown.png
+				   |-- scrollup.png
+				   |-- toolstub.png
+				   |-- ui.png
+				   |-- usebutton.png
+				   |-- usetool.png
+				   |-- walkbutton.png
+				   |-- walktool.png
+				   
+   start.xml is the first level definition loaded by the engine, analogous to
+a website's index file while the images in the game\global\ui folder define the
+UI skin for the game. Arbitrary structure may be appended to this basic tree
+with the scripts in each level linking those resources together into a complete
+game. 
+
+   For scripting API reference, one may examine InterfaceTree.java. For a design
+example, one may reference the Aaron and the Floating Shaman Head game sources
+for which the engine was designed which can be found at 
+https://github.com/JMarlin/AATFSHSL
+				   

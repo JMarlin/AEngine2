@@ -4,9 +4,9 @@ package aengine2;
  * File:    AEngine2.java                                                                         *
  * Author:  Joseph Marlin (j.marlin@outlook.com)                                                  *
  * Description:                                                                                   *
- *    This class represents the top-level Swing window for the AEngine2 desktop application, which*
- * creates and appends a Core object, which is the functional rendering loop and canvas of the    *
- * engine, into itself. This allows for the option to add a secondary applet equivalent in the    *
+ *    This class represents the top-level Swing window for the AEngine2 desktop application,      *
+ * which creates and appends a Core object, which is the functional rendering loop and canvas     *
+ * of the engine, into itself. This allows for the option to add a secondary applet equivalent    *
  * allowing for a JAR which can be launched either in desktop or applet mode in the future.       *
  **************************************************************************************************/
 

@@ -461,7 +461,7 @@ public class Core extends JPanel {
                 this.addMouseListener(new thisMouseListener());
                 
                 //Start the global timing thread               
-                theTimer = new timeThread(aengine, engine, this, "");
+                theTimer = new timeThread(aengine, engine, this);
                 theTimer.start();
                
                 //Load the UI skin from the game folder
@@ -646,7 +646,7 @@ public class Core extends JPanel {
                     engine.eval(getTagValue("script", eElement));
                     
                     //Restart the timing thread
-                    theTimer = new timeThread(aengine, engine, this, "");
+                    theTimer = new timeThread(aengine, engine, this);
                     theTimer.start();
                                         
                 }catch(ParserConfigurationException e) {

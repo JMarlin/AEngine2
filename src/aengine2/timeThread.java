@@ -1,47 +1,59 @@
 package aengine2;
+/**************************************************************************************************
+ * Project: AEngine2                                                                              *
+ * File:    timeThread.java                                                                       *
+ * Author:  Joseph Marlin (j.marlin@outlook.com)                                                  *
+ * Description:                                                                                   *
+ *   This thread handles all time-dependent functions of the engine. These include calling the    *
+ * Core canvas's paint function 24 times a second to facilitate rendering and animation,          *
+ * processing the walk action of the player character (which needs overhauling to utilize the new *
+ * polygon-based path solver) and processing Triggers from the InterfaceTree.                     *
+ **************************************************************************************************/
 
 import java.util.*;
 import javax.script.*;
 import javax.swing.*;
 
-/**
- *
- * @author Joe
- */
+//Process timed events
 public class timeThread extends Thread {
     
-    private ScriptEngine engine;
-    private java.util.List trig;
-    private JPanel canvas;
-    private double lastTime;
-    private double xSpeed;
-    private double ySpeed;
-    private boolean walking;
-    private InterfaceTree aengine;
-    private boolean animToggle;
-    private double feetX, feetY, Ydir, Xdir;
-    private String tempScript;
-    public boolean halt;
-    private String iniCode;
+    private ScriptEngine engine;                //The Rhino instance used to process Trigger scripts
+    private JPanel canvas;                      //The Core JPanel
+    private double lastTime;                    //The previous time at which the timing loop executed
+    private double xSpeed;                      //Pixels per frame which the player character moves horizontally
+    private double ySpeed;                      //Pixels per frame which the player character moves vertically
+    private boolean walking;                    //Wether or not the player character is walking
+    private InterfaceTree aengine;              //The interface tree of the engine
+    private double feetX, feetY, Ydir, Xdir;    //The bottom center of the player character image and whether the character is moving up, down, left or right
+    private String tempScript;                  //The current trigger script to be executed
+    public boolean halt;                        //Raised to stop the thread's execution
     
-    
+    //The main timing loop
     @Override public void run() {
              
-        double rightNow;
-        Thing tempThing; 
-        int frame;
+        double rightNow;    //The current system time        
         
-        
+            //Process until the thread is interrupted
             while(!this.isInterrupted()) {
+                                
+                //Ensure that the rest of the engine is running
                 if(aengine != null && engine != null){
                     if(aengine.mainCharacter != null) {
+                        
+                    //Get the system time    
                     rightNow = new Date().getTime();
 
+                    
+            //----------------| PLAYER CHARACTER WALKING INIT |----------------------//
+                    
+                    //Calculate the bottom center of the player character image
                     feetX = aengine.mainCharacter.x+((aengine.mainCharacter.imageData.getWidth()*aengine.mainCharacter.scale)/2);
                     feetY = aengine.mainCharacter.y+(aengine.mainCharacter.imageData.getHeight()*aengine.mainCharacter.scale);
 
+                    //If a walk event is being requested, initialize the walking system
                     if(aengine.startWalk == true){
 
+                        //Don't indicate a walking cycle unless the intended path is clear
                         if((aengine.destX < feetX && (this.walkmapCollideEast() || ((aengine.mainCharacter.x - (8*aengine.mainCharacter.scale)) <= 0)))   ||
                            (aengine.destX >= feetX && (this.walkmapCollideWest()|| ((aengine.mainCharacter.x + (aengine.mainCharacter.imageData.getWidth()*aengine.mainCharacter.scale) + (8*aengine.mainCharacter.scale)) >= 640)))  ||
                            (aengine.destY < feetY && (this.walkmapCollideNorth() || ((aengine.mainCharacter.y - (2*aengine.mainCharacter.scale)) <= 0)))  ||
@@ -54,11 +66,8 @@ public class timeThread extends Thread {
                             aengine.startWalk = false;
                         }                    
 
-
-
-
-
-
+                        //Set the horizontal and vertical direction of the
+                        //character's motion
                         if(aengine.destX < feetX){
                                 aengine.mainCharacter.mirrored = true;
                                 Xdir = -1;
@@ -66,7 +75,6 @@ public class timeThread extends Thread {
                                 aengine.mainCharacter.mirrored = false;
                                 Xdir = 1;
                         }
-
                         if(aengine.destY < feetY){
                                 Ydir = -1;
                         }else{
@@ -75,24 +83,28 @@ public class timeThread extends Thread {
 
                     }
 
-
+                    //Process a frame every 1/24 of a second
                     if(rightNow >= lastTime + 80) {
                         lastTime = rightNow;
 
+            //----------------| PLAYER CHARACTER WALKING CYCLE |----------------------//
                             if(walking){
 
+                                //Set the horizontal and vertical speeds based on character scale
                                 xSpeed = Xdir*8*aengine.mainCharacter.scale;
                                 ySpeed = Ydir*2*aengine.mainCharacter.scale;
 
-
+                                //Increase or decrease the character's x and y if either is not yet at the
+                                //value of the destination point
                                 if( (xSpeed < 0 && feetX > aengine.destX) || (xSpeed > 0 && feetX < aengine.destX) ) {
                                     aengine.mainCharacter.x += xSpeed;
                                 }
-
                                 if( (ySpeed < 0 && feetY > aengine.destY) || (ySpeed > 0 && feetY < aengine.destY) ) {
                                     aengine.mainCharacter.y += ySpeed;
                                 }
 
+                                //Stop the walking cycle and execute the walkTo script if the character is 
+                                //at the destination point
                                 if((((ySpeed < 0 && feetY <= aengine.destY) || (ySpeed > 0 && feetY >= aengine.destY))
                                  &&((xSpeed < 0 && feetX <= aengine.destX) || (xSpeed > 0 && feetX >= aengine.destX)))) {
                                     walking = false;
@@ -106,6 +118,8 @@ public class timeThread extends Thread {
                                     }
                                 }
 
+                                //If the character collides with something, stop the walking
+                                //cycle without executing the walkTo script
                                 if((aengine.destX < feetX && (this.walkmapCollideEast() || ((aengine.mainCharacter.x - (8*aengine.mainCharacter.scale)) <= 0)))   ||
                                    (aengine.destX >= feetX && (this.walkmapCollideWest()|| ((aengine.mainCharacter.x + (aengine.mainCharacter.imageData.getWidth()*aengine.mainCharacter.scale) + (8*aengine.mainCharacter.scale)) >= 640)))  ||
                                    (aengine.destY < feetY && (this.walkmapCollideNorth() || ((aengine.mainCharacter.y - (2*aengine.mainCharacter.scale)) <= 0)))  ||
@@ -115,6 +129,7 @@ public class timeThread extends Thread {
                                         aengine.mainCharacter.setFrame(aengine.mainCharacter.getFrameCount());
                                 }
 
+                                //Scale the character based on how far away it is
                                 aengine.mainCharacter.scale = (((aengine.mainCharacter.y+aengine.mainCharacter.imageData.getHeight())-360)/360.0)+1;
                             }
 
@@ -122,10 +137,11 @@ public class timeThread extends Thread {
                     
                     }
                 
+                    //Draw the frame
                     canvas.repaint();
                
-              
-                    
+                    //Get and execute the collected scripts of all 
+                    //elapsed Triggers from the tree
                     try{
                             tempScript = "";
                             if(aengine.processing == false) tempScript = aengine.processTriggers();                            
@@ -146,23 +162,25 @@ public class timeThread extends Thread {
         
     }
     
+    //Pause/unpause the thread
     public void toggleRun(){
         this.halt = !this.halt;
     }
     
-    public timeThread(InterfaceTree newAengine, ScriptEngine newEngine, JPanel newCanvas, String initCode) {
+    //Basic constructor
+    //Requires references to the other engine components
+    public timeThread(InterfaceTree newAengine, ScriptEngine newEngine, JPanel newCanvas) {
         
         aengine = newAengine;
         engine = newEngine;
         canvas = newCanvas;
         lastTime = 0;
         walking = false;
-        animToggle = false;
         halt = false;
-        iniCode = initCode;
         
     }
     
+    //Check if the character's feet are running into anything above them
     public boolean walkmapCollideNorth() {
         
         if(aengine.walkmap == null) return false;
@@ -186,6 +204,7 @@ public class timeThread extends Thread {
         
     }
     
+    //Check if the character's feet are running into anything below them
     public boolean walkmapCollideSouth() {
         
         if(aengine.walkmap == null) return false;
@@ -209,6 +228,7 @@ public class timeThread extends Thread {
         
     }
     
+    //Check if the character's feet are running into anything to the right of them
     public boolean walkmapCollideEast() {
         
         if(aengine.walkmap == null) return false;
@@ -232,6 +252,7 @@ public class timeThread extends Thread {
         
     }
     
+    //Check if the character's feet are running into anything to the left of them
     public boolean walkmapCollideWest() {
         
         if(aengine.walkmap == null) return false;

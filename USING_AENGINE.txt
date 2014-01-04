@@ -20,8 +20,8 @@ thereof.
    
     |
     |-- AEngine2.jar
-	|-- game
 	|
+	|-- game
 	|-- start.xml
 	|-- global
 		|

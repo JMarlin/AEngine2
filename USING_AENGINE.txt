@@ -21,23 +21,23 @@ thereof.
     |
     |-- AEngine2.jar
 	|-- game
-		 |
-		 |-- start.xml
-		 |-- global
-		      |
-			  |-- ui
-			       |
-				   |-- itemhighlight.png
-				   |-- lookbutton.png
-				   |-- looktool.png
-				   |-- scrolldown.png
-				   |-- scrollup.png
-				   |-- toolstub.png
-				   |-- ui.png
-				   |-- usebutton.png
-				   |-- usetool.png
-				   |-- walkbutton.png
-				   |-- walktool.png
+	|
+	|-- start.xml
+	|-- global
+		|
+		|-- ui
+		     |
+		     |-- itemhighlight.png
+		     |-- lookbutton.png
+		     |-- looktool.png
+		     |-- scrolldown.png
+		     |-- scrollup.png
+		     |-- toolstub.png
+		     |-- ui.png
+		     |-- usebutton.png
+		     |-- usetool.png
+		     |-- walkbutton.png
+		     |-- walktool.png
 				   
    start.xml is the first level definition loaded by the engine, analogous to
 a website's index file while the images in the game\global\ui folder define the
